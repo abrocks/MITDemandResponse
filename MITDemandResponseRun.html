@@ -1,0 +1,40 @@
+<html>
+        <head>
+          <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+          <script type="text/javascript">
+          //the citation for this format is here
+          // https://developers.google.com/chart/interactive/docs/gallery/combochart
+
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawVisualization);
+      
+            function drawVisualization() {
+            //var Bid = require('./Bid');
+            //require is a node thing(?), so bring in bid thing another way (will need to do the same with Dave's data)
+              var data = google.visualization.arrayToDataTable([
+               ['Day/Hour', 'Profit', "Average Day-Ahead Locational Marginal Price"],
+               ['2004/05', 46, 24.5],
+               //going to have to insert our data here 
+               //draw from Dave's files and the bid price thing 
+               //maybe a forEach loop across Dave's javascript files where 
+               //where if(Bid>Price){profit = (Price-Bid)*BidMW}
+            ]);
+      
+          var options = {
+            title : 'Potential Profitability of MIT Demand Response Participation',
+            vAxis: {title: 'Average Day-Ahead Locational Marginal Price'},
+            hAxis: {title: 'Time'},
+            seriesType: 'bars',
+            series: {1: {type: 'line'}}
+          };
+      
+          var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+          chart.draw(data, options);
+        }
+          </script>
+        </head>
+        <body>
+          <div id="chart_div" style="width: 900px; height: 500px;"></div>
+        </body>
+      </html>
+
