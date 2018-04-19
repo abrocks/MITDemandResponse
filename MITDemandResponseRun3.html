@@ -1,0 +1,122 @@
+<html>
+        <head>
+          <script src="datAll.js"></script>
+          <script src= "Bid.js"></script>
+          <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+          <script type="text/javascript">
+          
+          //the citation for this format is here
+          //https://www.amcharts.com/kbase/combining-column-and-line-graphs-with-separate-axis/
+          var graphableArrayLine = ALLDATA.map(function(element){
+                  var intermediate = {};
+                  intermediate.x = element[1]+'/'+element[2];
+                  intermediate.y = element[6]; 
+                  return intermediate; 
+                  //output should be {month/day/year/hour, profit, LMP}
+                });
+            var graphableArrayArea = ALLDATA.map(function(element){
+                var intermediate = {};
+                intermediate.x = element[1]+'/'+element[2];
+                if(element[6]>BidPrice){intermediate.y = BidMW*(element[6]-BidPrice)}
+                else{intermediate.y = 0}
+                return intermediate; 
+                  //output should be {month/day/year/hour, profit, LMP}
+                });     
+                
+            window.onload = function () {
+
+            var chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                theme: "light2",
+                title: {
+                    text: "MIT Demand Response Profitability"
+                },
+                axisX: {
+                    valueFormatString: "MMM"
+                },
+                axisY: {
+                    prefix: "$",
+                    labelFormatter: addSymbols
+                },
+                toolTip: {
+                    shared: true
+                },
+                legend: {
+                    cursor: "pointer",
+                    itemclick: toggleDataSeries
+                },
+                data: [
+                    /*
+                {
+                    type: "column",
+                    name: "Actual Sales",
+                    showInLegend: true,
+                    xValueFormatString: "MMMM YYYY",
+                    yValueFormatString: "$#,##0",
+                    dataPoints: [
+                        { x: new Date(2016, 0), y: 20000 },
+                        { x: new Date(2016, 1), y: 30000 },
+                        { x: new Date(2016, 2), y: 25000 },
+                        { x: new Date(2016, 3), y: 70000, indexLabel: "High Renewals" },
+                        { x: new Date(2016, 4), y: 50000 },
+                        { x: new Date(2016, 5), y: 35000 },
+                        { x: new Date(2016, 6), y: 30000 },
+                        { x: new Date(2016, 7), y: 43000 },
+                        { x: new Date(2016, 8), y: 35000 },
+                        { x: new Date(2016, 9), y:  30000},
+                        { x: new Date(2016, 10), y: 40000 },
+                        { x: new Date(2016, 11), y: 50000 }
+                    ]
+                }, 
+                */ 
+                {
+                    type: "line",
+                    name: "LMP",
+                    showInLegend: true,
+                    yValueFormatString: "$#,##0",
+                    dataPoints: graphableArrayLine
+                },
+                {
+                    type: "area",
+                    name: "Profit",
+                    markerBorderColor: "white",
+                    markerBorderThickness: 2,
+                    showInLegend: true,
+                    yValueFormatString: "$#,##0",
+                    dataPoints: graphableArrayArea
+                }]
+            });
+            chart.render();
+
+            function addSymbols(e) {
+                var suffixes = ["", "K", "M", "B"];
+                var order = Math.max(Math.floor(Math.log(e.value) / Math.log(1000)), 0);
+
+                if(order > suffixes.length - 1)                	
+                    order = suffixes.length - 1;
+
+                var suffix = suffixes[order];      
+                return CanvasJS.formatNumber(e.value / Math.pow(1000, order)) + suffix;
+            }
+
+            function toggleDataSeries(e) {
+                if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else {
+                    e.dataSeries.visible = true;
+                }
+                e.chart.render();
+            }
+
+}
+</script>
+</head>
+
+<body>
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+</body>
+</html>
+
+        
+      
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="datAll.js"></script>
+<script>
+    // Map data to object array
+    var ENERGYDAT = ALLDATA.map(t=>{
+        var v = {
+            date: t[1],
+            hourEnding: t[2],
+            locationID: t[3],
+            locationName: t[4],
+            locationType: t[5],
+            marginalPrice: t[6],
+            energyComponent: t[7],
+            congestionComponent: t[8],
+            marginalLossComponent: t[9]
+        };
+        return v;
+    });
+
+
+
+    console.log(ENERGYDAT[0]);
+</script>
+</body>
+</html>

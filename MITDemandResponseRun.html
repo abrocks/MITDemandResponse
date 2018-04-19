@@ -1,35 +1,53 @@
 <html>
         <head>
           <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+          <script src="datAll.js"></script>
+          <script src= "Bid.js"></script>
           <script type="text/javascript">
           //the citation for this format is here
           // https://developers.google.com/chart/interactive/docs/gallery/combochart
 
             google.charts.load('current', {'packages':['corechart']});
             google.charts.setOnLoadCallback(drawVisualization);
-      
+
+            var graphableArray = ALLDATA.map(function(element){
+                  var intermediate = [];
+                  intermediate.push(element[1]+'/'+element[2]);
+                  if(element[6]>BidPrice){intermediate.push(BidMW*(element[6]-BidPrice)
+                  )}else{intermediate.push(0)}
+                  intermediate.push(element[6]);
+                  return intermediate; 
+                });
+
+            graphableArray.unshift(
+              ['Day', 'Profit', "Day-Ahead Locational Marginal Price"]
+            ); 
+
             function drawVisualization() {
-            //var Bid = require('./Bid');
-            //require is a node thing(?), so bring in bid thing another way (will need to do the same with Dave's data)
-              var data = google.visualization.arrayToDataTable([
-               ['Day/Hour', 'Profit', "Average Day-Ahead Locational Marginal Price"],
+              var gdata = google.visualization.arrayToDataTable(graphableArray
+                /*[]
+               ['Day', 'Profit', "Average Day-Ahead Locational Marginal Price"],
+                ALLDATA.forEach(function(element){
+                  var intermediate = [];
+                  intermediate.push(element[1]+'/'+element[2]);
+                  if(element[5]>BidPrice){intermediate.push(BidMW*(BidPrice- element[5])
+                  )}else{intermediate.push(0)}
+                  intermediate.push(element[5]);
+                  return intermediate; 
+                })
+               want a format for data like the one below
                ['2004/05', 46, 24.5],
-               //going to have to insert our data here 
-               //draw from Dave's files and the bid price thing 
-               //maybe a forEach loop across Dave's javascript files where 
-               //where if(Bid>Price){profit = (Price-Bid)*BidMW}
-            ]);
-      
+              ]*/
+            ); 
           var options = {
             title : 'Potential Profitability of MIT Demand Response Participation',
-            vAxis: {title: 'Average Day-Ahead Locational Marginal Price'},
+            vAxis: {title: 'LMP'},
             hAxis: {title: 'Time'},
             seriesType: 'bars',
             series: {1: {type: 'line'}}
-          };
-      
+          }
           var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-          chart.draw(data, options);
+          chart.draw(gdata, options);
         }
           </script>
         </head>
