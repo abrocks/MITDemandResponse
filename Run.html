@@ -23,6 +23,21 @@
     <canvas id="drawMITConsumptionVsISONE_Div" width="900" height="500"></canvas>
     
     <script type="text/javascript">
+    //added this to make things easier to code
+     var ENERGYDAT = ALLDATA.map(t=>{
+        var v = {
+            date: t[1],
+            hourEnding: t[2],
+            locationID: t[3],
+            locationName: t[4],
+            locationType: t[5],
+            marginalPrice: t[6],
+            energyComponent: t[7],
+            congestionComponent: t[8],
+            marginalLossComponent: t[9]
+        };
+        return v;
+    });
     
     google.charts.load('current', {packages: ['corechart', 'line']});
     google.charts.setOnLoadCallback(drawISONEPRices);
