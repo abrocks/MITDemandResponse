@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+   
 
     <title>MIT Energy Pricing</title>
 
@@ -41,6 +42,7 @@
     </style>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 </head>
 
 <body>
@@ -52,28 +54,51 @@
     </nav>
 </div>
 
-
-
 <div class="container-fluid">
     <div class="row mb-3">
         <div class="col-3">
             Start Date:
             <input type="text" id="startDate" value="04/01/2016">
-        </div>
+            </div>
         <div class="col-3">
             End Date:
             <input type="text" id="endDate" value="04/07/2016">
+            </div>
+        <div class="col-3">
+            <button type="button" class="btn btn-success" onclick="run()">View</button>
+    </div>
+</div>
+</div>
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-3">
+            Bid Price, $/MWh
+            <input type="number" id="Bid Price" value="20">
         </div>
         <div class="col-3">
             <button type="button" class="btn btn-success" onclick="run()">View</button>
-        </div>
     </div>
+    </div>
+</div>
 
+    <div class="container-fluid">
+        <div class="row mb-3">   
+            <div class="col-3">
+                Bid Amount, MW
+                <input type="number" id="BidAmount" value="1">
+            </div>
+            <div class="col-3">
+                <button type="button" class="btn btn-success" onclick="run()">View</button>
+            </div>
+        </div>
 
     <div class="card-deck mb-3 text-center">
         <div class="card mb-4 box-shadow">
             <div class="card-header">
                 <h4 class="my-0 font-weight-normal">Graph 1</h4>
+                
+            <div id="drawISONEPRicesChart_Div" ></div>
             </div>
             <div class="card-body">
 
@@ -116,5 +141,8 @@
 <script src="datAll.js"></script>
 <script src="mitUse.js"></script>
 <script src="general.js"></script>
+<script src="Bid.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </body>
 </html>

@@ -22,11 +22,17 @@ $( function() {
         return v;
     });
 
+//need for Google Charts 
+google.charts.load('current', { packages: ['corechart', 'line'] });
+
 function run(){
     // Data from ne-iso
     console.log(getDataFromRange());
     // Data from MIT's usage
     console.log(getUsageFromRange());
+    updateBidPrice();
+    updateBidAmount();
+    google.charts.setOnLoadCallback(drawISONEPRices); 
 }
 
 // Function to get data within time range
@@ -47,3 +53,25 @@ function getUsageFromRange(startDate, endDate){
     return MITDATA.filter(o => o.date >= startDate && o.date <= endDate);
 }
 //console.log(ENERGYDAT[0]);
+function drawISONEPRices() {
+    var PriceBidGraphableArray = ALLDATA.map(function (element) {
+        var intermediate = getDataFromRange();
+        intermediate.push(element.date + '/' + element.hourEnding);
+        intermediate.push(element.marginalPrice);
+        intermediate.push(BidPrice);
+        return intermediate;
+    });
+
+    PriceBidGraphableArray.unshift(['Time', 'DAM LMP', "Bid Price"]);
+    var gdata = google.visualization.arrayToDataTable(PriceBidGraphableArray);
+    var options = {
+        title: 'ISO-NE Price versus Bid Price',
+        vAxis: { title: 'LMP ($/MWh)' },
+        hAxis: { title: 'Time (Month/Day/Year/Hour)' },
+        seriesType: 'line',
+        series: { 1: { type: 'line' } }
+    }
+    var chart = new google.visualization.ComboChart(document.getElementById('drawISONEPRicesChart_Div'));
+    chart.draw(gdata, options);
+}
+; 
