@@ -1,80 +1,89 @@
-<html>
-    <head>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+        crossorigin="anonymous">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="datAll.js"></script>
-    <script src= "Bid.js"></script>
+    <script src="Bid.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <head>1.001: MIT Demand Response</head>
+    <h2>What if MIT were to participate in a demand response program?</h2>
+    <p>Update the Bid</p>
 
+    <input type="number" id="BidPrice" value="20">
+    <button onclick="updateBidPrice()">Bid Price, $/MWh</button>
+    <input type="number" id="BidAmount" value="1">
+    <button onclick="updateBidAmount()">Bid Amount, MW</button>
+    <script>
+            /*
+        <p>Or, alternatively, change the price of natural gas and MIT's consumption of natural gas</p>
+        <input type="number" id="NGPrice" value="2.52">
+        <button onclick="updateNGPrice()">Price of Natural Gas, $/mmBTU</button>
+        <input type="number" id="HeatRate" value="7.87">
+        <button onclick="updateHeatRate()">Plant Heat Rate, mmBTU/MW</button>
+        */
+    </script>
+
+</head>
+
+<body>
+    <div id="drawISONEPRicesChart_Div" style="width: 900px; height: 500px;"></div>
+    <canvas id="drawMITConsumptionVsISONE_Div" width="900" height="500"></canvas>
     <script type="text/javascript">
-    
-    google.charts.load('current', {packages: ['corechart', 'line']});
-    google.charts.setOnLoadCallback(drawISONEPRices);
+       
+        var ENERGYDAT = ALLDATA.map(t => {
+            var v = {
+                date: t[1],
+                hourEnding: t[2],
+                locationID: t[3],
+                locationName: t[4],
+                locationType: t[5],
+                marginalPrice: t[6],
+                energyComponent: t[7],
+                congestionComponent: t[8],
+                marginalLossComponent: t[9]
+            };
+            return v;
+        });
 
-    var PriceBidGraphableArray = ALLDATA.map(function(element){
-        var intermediate = [];
-            intermediate.push(element[1]+'/'+element[2]);
-            intermediate.push(element[6]);
-            intermediate.push(BidPrice); 
-            return intermediate;
+        google.charts.load('current', { packages: ['corechart', 'line'] });
+        google.charts.setOnLoadCallback(drawISONEPRices);
+
+        function drawISONEPRices() {
+            var PriceBidGraphableArray = ALLDATA.map(function (element) {
+                var intermediate = [];
+                intermediate.push(element[1] + '/' + element[2]);
+                intermediate.push(element[6]);
+                intermediate.push(BidPrice);
+                return intermediate;
             });
 
-    PriceBidGraphableArray.unshift(
-    ['Time', 'DAM LMP', "Bid Price"]
-    ); 
-
-    function drawISONEPRices() {
-        var gdata = google.visualization.arrayToDataTable(PriceBidGraphableArray); 
-        var options = {
-            title : 'ISO-NE Price versus Bid Price', 
-            vAxis: {title: 'LMP ($/MWh)'},
-            hAxis: {title: 'Time (Month/Day/Year/Hour)'},
-            seriesType: 'line',
-            series: {1: {type: 'line'}}
-          }
-        var chart = new google.visualization.ComboChart(document.getElementById('drawISONEPRicesChart_Div'));
-        chart.draw(gdata, options);
+            PriceBidGraphableArray.unshift(['Time', 'DAM LMP', "Bid Price"]);
+            var gdata = google.visualization.arrayToDataTable(PriceBidGraphableArray);
+            var options = {
+                title: 'ISO-NE Price versus Bid Price',
+                vAxis: { title: 'LMP ($/MWh)' },
+                hAxis: { title: 'Time (Month/Day/Year/Hour)' },
+                seriesType: 'line',
+                series: { 1: { type: 'line' } }
+            }
+            var chart = new google.visualization.ComboChart(document.getElementById('drawISONEPRicesChart_Div'));
+            chart.draw(gdata, options);
         }
         ; 
-
-
-
-//this could be a double line chart, but right now same axis
-//http://tobiasahlin.com/blog/chartjs-charts-to-get-you-started/
-//has same axis though
-
-var ISONEPriceArray = ALLDATA.map(element){
-    element[6]; 
-}
-
-    new Chart(document.getElementById("drawMITConsumptionVsISONE_Div"), {
-    type: 'line',
-    data: {
-    labels: [1500,1600,1700,1750,1800,1850,1900,1950,1999,2050],//this would be date
-    datasets: [{ 
-        data: ISONEPriceArray,
-        label: "ISO-NE",
-        borderColor: "#3e95cd",
-        fill: false
-      }, { 
-        data: [282,350,411,502,635,809,947,1402,3700,5267],
-        label: "MIT Energy Consumption",
-        borderColor: "#8e5ea2",
-        fill: false
-      }
-    ]
-  },
-  options: {
-    title: {
-      display: true,
-      text: ''
-    }
-  }
-});
-
     </script>
-    </head>
-    <body>
-        <div id="drawISONEPRicesChart_Div" style="width: 900px; height: 500px;"></div>
-        <canvas id="drawMITConsumptionVsISONE_Div" width="900" height="500"></canvas>
-    </body>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+
+
+</body>
+
 </html>

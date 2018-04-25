@@ -1,5 +1,5 @@
 <html>
-        <head>
+  <head>
           <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
           <script src="datAll.js"></script>
           <script src= "Bid.js"></script>
@@ -24,21 +24,7 @@
             ); 
 
             function drawVisualization() {
-              var gdata = google.visualization.arrayToDataTable(graphableArray
-                /*[]
-               ['Day', 'Profit', "Average Day-Ahead Locational Marginal Price"],
-                ALLDATA.forEach(function(element){
-                  var intermediate = [];
-                  intermediate.push(element[1]+'/'+element[2]);
-                  if(element[5]>BidPrice){intermediate.push(BidMW*(BidPrice- element[5])
-                  )}else{intermediate.push(0)}
-                  intermediate.push(element[5]);
-                  return intermediate; 
-                })
-               want a format for data like the one below
-               ['2004/05', 46, 24.5],
-              ]*/
-            ); 
+              var gdata = google.visualization.arrayToDataTable(graphableArray); 
           var options = {
             title : 'Potential Profitability of MIT Demand Response Participation',
             vAxis: {title: 'LMP'},
