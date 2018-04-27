@@ -8,49 +8,28 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="datAll.js"></script>
     <script src="Bid.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="mitUse.js"></script>
     <head>1.001: MIT Demand Response</head>
     <h2>What if MIT were to participate in a demand response program?</h2>
     <p>Update the Bid</p>
-
     <input type="number" id="BidPrice" value="20">
     <button onclick="updateBidPrice()">Bid Price, $/MWh</button>
     <input type="number" id="BidAmount" value="1">
     <button onclick="updateBidAmount()">Bid Amount, MW</button>
-    <script>
-            /*
-        <p>Or, alternatively, change the price of natural gas and MIT's consumption of natural gas</p>
-        <input type="number" id="NGPrice" value="2.52">
-        <button onclick="updateNGPrice()">Price of Natural Gas, $/mmBTU</button>
-        <input type="number" id="HeatRate" value="7.87">
-        <button onclick="updateHeatRate()">Plant Heat Rate, mmBTU/MW</button>
-        */
-    </script>
 
 </head>
 
 <body>
     <div id="drawISONEPRicesChart_Div" style="width: 900px; height: 500px;"></div>
+    <div id="drawProfitability_Div" style="width: 900px; height: 500px;"></div>
     
     <script type="text/javascript">
-       
-        var ENERGYDAT = ALLDATA.map(t => {
-            var v = {
-                date: t[1],
-                hourEnding: t[2],
-                locationID: t[3],
-                locationName: t[4],
-                locationType: t[5],
-                marginalPrice: t[6],
-                energyComponent: t[7],
-                congestionComponent: t[8],
-                marginalLossComponent: t[9]
-            };
-            return v;
-        });
 
-        google.charts.load('current', { packages: ['corechart', 'line'] });
-        google.charts.setOnLoadCallback(drawISONEPRices);
+    //loading google charts
+    google.charts.load('current', { packages: ['corechart', 'line'] });
+    google.charts.setOnLoadCallback(drawISONEPRices);
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawProfit);
 
         function drawISONEPRices() {
             var PriceBidGraphableArray = ALLDATA.map(function (element) {
@@ -60,7 +39,6 @@
                 intermediate.push(BidPrice);
                 return intermediate;
             });
-
             PriceBidGraphableArray.unshift(['Time', 'DAM LMP', "Bid Price"]);
             var gdata = google.visualization.arrayToDataTable(PriceBidGraphableArray);
             var options = {
@@ -73,7 +51,108 @@
             var chart = new google.visualization.ComboChart(document.getElementById('drawISONEPRicesChart_Div'));
             chart.draw(gdata, options);
         }
-        ; 
+         
+//tried https://stackoverflow.com/questions/17500312/is-there-some-way-i-can-join-the-contents-of-two-javascript-arrays-much-like-i
+   
+   function drawProfit(){
+       var Profit = []; 
+       var Use = []; 
+        ALLDATA.forEach(function(element) {
+            var profitIntermediate = {}; 
+            profitIntermediate.date = element[1];
+            profitIntermediate.time = element[2]+':00';
+            if(element[6]>BidPrice){
+                profitIntermediate.perUnitProfit= element[6]-BidPrice
+                }
+                else{profitIntermediate.perUnitProfit= 0}
+            Profit.push(profitIntermediate); 
+            });
+        MITDATA.forEach(function(element){
+            var DataIntermediate = {};
+            //something wrong with this if statement because not meeting the condition 
+            // el.tim[3]==='0'
+            if((element.time[3]== '0')&&(element.usage/1000 >= BidMW)){
+                DataIntermediate.date = element.date;
+                DataIntermediate.time = element.time; 
+                DataIntermediate.MWReduction= BidMW;  
+                Use.push(DataIntermediate);
+            }
+            
+            });
+
+        function mergeArrays(a,b){
+            //a must be the array with profit, b must be the array with MWReduction
+            arr=[];
+        a.forEach(function(element){
+            let c={}; 
+           b.forEach(function(thing){
+               if((element.date===thing.date)&&(element.time===thing.time)){
+                   c.date = thing.date;
+                   c.time = thing.time;
+                   c.profit = element.perUnitProfit*thing.MWReduction; 
+                //    console.log(c)
+                   arr.push(c);
+               }
+                                 })
+                                }); 
+                            return arr;
+                            }; 
+
+    var joinedArray= mergeArrays(Profit, Use);  
+
+
+    var MakeReducedArray = function(rArry){ 
+        //the PlaceHolderDate is screwing things up 
+        var tryCycleReduceGraph = [];
+        var PlaceHolderDate = '00/00/0000';
+        var HourSum = 0;
+
+        rArry.forEach(function(element){ 
+            var SOS = []; 
+            if(element.date !== PlaceHolderDate){ 
+                SOS.push(PlaceHolderDate);
+                SOS.push(HourSum);
+                tryCycleReduceGraph.push(SOS); 
+                PlaceHolderDate= element.date; 
+                HourSum = element.profit; 
+            }else if(element.date === PlaceHolderDate){
+                HourSum += element.profit }     
+        }, 
+        //dont know why this return isn't working 
+        return tryCycleReduceGraph;   
+    }  
+    var GraphArray2 = MakeReducedArray(joinedArray);  
+    GraphArray2.unshift(['Day', 'Profit']); 
+    //     var graphArray = joinedArray.reduce(function(accum, current){
+    //         if (current.date in accum) {
+    //         accum[current.date] += current.profit
+    //                                         }
+    //         else{
+    //         accum[current.date] = current.profit      
+    // }
+    // return accum;
+    //     },[]); 
+    //     // var graphArray = joinedArray.forEach(function(element){
+    //     //     var outputObject = [];
+    //     //     //get an array of objects 
+    //     // }); 
+        console.log('this is the reduced array'); 
+        console.log(GraphArray2); 
+        var data = new google.visualization.DataTable(GraphArray2);
+
+        var options = {
+        title: 'Daily Profitability',
+        hAxis: {
+          title: 'Day',
+                }, 
+        vAxis: {
+          title: 'Profit ($)'
+                }
+        }
+        var chart = new google.visualization.ColumnChart(document.getElementById('drawProfitability_Div'));
+        chart.draw(data, options);
+   }
+   
     </script>
     
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

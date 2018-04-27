@@ -13,9 +13,11 @@ var BidMW = 1.0; //units in MW, participation requres at least 0.1 MW
 
 function updateBidPrice(){
         BidPrice= Number(document.getElementById('BidPrice').value);
+        drawISONEPRices(); 
 }
 function updateBidAmount(){
-        BidMW = Number(document.getElementById('BidAmount').value);       
+        BidMW = Number(document.getElementById('BidAmount').value);      
+        drawProfit();  
 }
 /*
 function updateNGPrice(){

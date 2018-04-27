@@ -24,6 +24,7 @@ $( function() {
 
 //need for Google Charts 
 google.charts.load('current', { packages: ['corechart', 'line'] });
+google.charts.load('current', {packages: ['corechart', 'bar']});
 
 function run(){
     // Data from ne-iso
@@ -33,6 +34,7 @@ function run(){
     updateBidPrice();
     updateBidAmount();
     google.charts.setOnLoadCallback(drawISONEPRices); 
+    google.charts.setOnLoadCallback(drawProfitability);
 }
 
 // Function to get data within time range
@@ -54,12 +56,11 @@ function getUsageFromRange(startDate, endDate){
 }
 //console.log(ENERGYDAT[0]);
 function drawISONEPRices() {
-    var PriceBidGraphableArray = ALLDATA.map(function (element) {
-        var intermediate = getDataFromRange();
-        intermediate.push(element.date + '/' + element.hourEnding);
-        intermediate.push(element.marginalPrice);
-        intermediate.push(BidPrice);
-        return intermediate;
+    console.log('dafljfdlgdf'); 
+    var intermediate = getDataFromRange();
+    var PriceBidGraphableArray = []; 
+    intermediate.forEach(function(element){
+        PriceBidGraphableArray.push([element[1], element[6], BidPrice]); 
     });
 
     PriceBidGraphableArray.unshift(['Time', 'DAM LMP', "Bid Price"]);
@@ -74,4 +75,26 @@ function drawISONEPRices() {
     var chart = new google.visualization.ComboChart(document.getElementById('drawISONEPRicesChart_Div'));
     chart.draw(gdata, options);
 }
-; 
+
+// function drawProfitability(){
+//     var intermediateISO = getDataFromRange();
+//     var intermediateMITUse = getUsageFromRange(); 
+//     var data = new google.visualization.arrayToDataTable([
+//         ['Day','Profitability'],
+//         //the results [time, profitability] , each row indivudalt
+//     ]); 
+//     var options = {
+//         title: 'Motivation Level Throughout the Day',
+//         hAxis: {
+//           title: 'Time of Day',
+//           format: 'h:mm a',
+//                 },
+//         vAxis: {
+//             title: '',
+//         }
+//     }
+//     var chart = new google.visualization.ColumnChart(document.getElementById('drawProfitability-Div'));
+//     chart.draw(data, options);
+// }
+
+    //for graph 3, citation https://canvasjs.com/jquery-charts/resizable-chart/
