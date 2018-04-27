@@ -98,47 +98,32 @@
                             return arr;
                             }; 
 
-    var joinedArray= mergeArrays(Profit, Use);  
-
-
-    var MakeReducedArray = function(rArry){ 
-        //the PlaceHolderDate is screwing things up 
-        var tryCycleReduceGraph = [];
-        var PlaceHolderDate = '00/00/0000';
-        var HourSum = 0;
-
-        rArry.forEach(function(element){ 
-            var SOS = []; 
-            if(element.date !== PlaceHolderDate){ 
-                SOS.push(PlaceHolderDate);
-                SOS.push(HourSum);
-                tryCycleReduceGraph.push(SOS); 
-                PlaceHolderDate= element.date; 
-                HourSum = element.profit; 
-            }else if(element.date === PlaceHolderDate){
-                HourSum += element.profit }     
-        }, 
-        //dont know why this return isn't working 
-        return tryCycleReduceGraph;   
-    }  
-    var GraphArray2 = MakeReducedArray(joinedArray);  
-    GraphArray2.unshift(['Day', 'Profit']); 
-    //     var graphArray = joinedArray.reduce(function(accum, current){
-    //         if (current.date in accum) {
-    //         accum[current.date] += current.profit
-    //                                         }
-    //         else{
-    //         accum[current.date] = current.profit      
-    // }
-    // return accum;
-    //     },[]); 
-    //     // var graphArray = joinedArray.forEach(function(element){
-    //     //     var outputObject = [];
-    //     //     //get an array of objects 
-    //     // }); 
-        console.log('this is the reduced array'); 
-        console.log(GraphArray2); 
-        var data = new google.visualization.DataTable(GraphArray2);
+    var joinedArray= mergeArrays(Profit, Use); 
+     
+    var dateCondensedHourArry = function(inputArry){
+       var dateArry= []; 
+       inputArry.forEach(function(row){
+           if(dateArry.includes(row.date)==='false'){dateArry.push(row.date)}
+       });
+       console.log(dateArry); 
+       var outputThisArray = []; 
+       dateArry.forEach(function(element){
+        var interProfit = 0; 
+            inputArry.forEach(function(rowelement){
+                if(element = rowelement.date){interProfit+= rowelement}
+            });
+        outputThisArray.push([element, interProfit]); 
+        })
+        return outputThisArray; 
+        }
+    
+    var dateProfit= dateCondensedHourArry(joinedArray); 
+   
+    dateProfit.unshift(['Day', 'Profit']); 
+    
+    console.log('this is the reduced array'); 
+    console.log(dateProfit); 
+        var data = new google.visualization.DataTable(/*put the array or arrays with header*/);
 
         var options = {
         title: 'Daily Profitability',
