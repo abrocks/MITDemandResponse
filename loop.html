@@ -1,0 +1,112 @@
+<head>
+    <script src="datAll.js"></script>
+    <script src="mitUse.js"></script> 
+    <script src="Bid.js"></script>
+</head>
+
+<body>
+<script type="text/javascript">
+var Profit = []; 
+    var Use = []; 
+    ALLDATA.forEach(function(element) {
+        var profitIntermediate = {}; 
+        profitIntermediate.date = element[1];
+        profitIntermediate.time = element[2]+':00';
+        if(element[6]>BidPrice){
+                profitIntermediate.perUnitProfit= element[6]-BidPrice
+                }
+                else{profitIntermediate.perUnitProfit= 0}
+            Profit.push(profitIntermediate); 
+            });
+        MITDATA.forEach(function(element){
+            var DataIntermediate = {};
+            //something wrong with this if statement because not meeting the condition 
+            // el.tim[3]==='0'
+            if((element.time[3]== '0')&&(element.usage/1000 >= BidMW)){
+                DataIntermediate.date = element.date;
+                DataIntermediate.time = element.time; 
+                DataIntermediate.MWReduction= BidMW;  
+                Use.push(DataIntermediate);
+            }
+            
+            });
+
+        function mergeArrays(a,b){
+            //a must be the array with profit, b must be the array with MWReduction
+            arr=[];
+        a.forEach(function(element){
+            let c={}; 
+           b.forEach(function(thing){
+               if((element.date===thing.date)&&(element.time===thing.time)){
+                   c.date = thing.date;
+                   c.time = thing.time;
+                   c.profit = element.perUnitProfit*thing.MWReduction; 
+                //    console.log(c)
+                   arr.push(c);
+               }
+                                 })
+                                }); 
+                            return arr;
+                            }; 
+
+console.log('this is the joined array'); 
+var joinedArray= mergeArrays(Profit, Use); 
+console.log(joinedArray); 
+
+//create an array of dates only 
+var dateArry = [];
+ALLDATA.forEach(function(element){
+    if(dateArry.indexOf(element[1])==-1){dateArry.push(element[1])}
+    }); 
+console.log('this is the date array'); 
+console.log(dateArry); 
+
+//now going to do this massive loop to create a new array of dates, profits
+//the is is its consoe.log same date and time (the end one)
+//and isnt returning so undefined 
+
+var dailyArray = [];
+var currentDate = joinedArray[0].date;
+var currentEntry = {date:currentDate, profit:0}
+joinedArray.forEach(function(elem){
+    if(elem.date == currentEntry.date){
+        currentEntry.profit += elem.profit
+    } else {
+        dailyArray.push([currentEntry.date,currentEntry.profit]);
+        currentEntry.date = elem.date;
+        currentEntry.profit = 0;
+    }
+});
+
+// var dayProfitRows = dateArry.forEach(function(element){ 
+    
+
+    
+    // var timeArry = [];
+    
+    // joinedArray.forEach(function(row){ 
+    //     if(element = row.date){timeArry.push(row.profit)}
+    // }); 
+    // var HourProfit =timeArry.reduce(function(previous, current) {
+    // return previous + current;
+    // }, 0);
+    // console.log([element, HourProfit]); 
+    // return [element, HourProfit]; 
+    // }); 
+
+// console.log('the rows for [day, profit]'); 
+// console.log(dayProfitRows); 
+
+// function MakeArrayfromArrays(insertBunchOfArrays){
+//     return [insertBunchOfArrays]; 
+// }
+// console.log('make an array from arrays'); 
+// var ProfitGraphArray = MakeArrayfromArrays(dayProfitRows);
+// console.log(ProfitGraphArray); 
+
+dailyArray.unshift(["Date","Profit"]);
+console.log('insert a header into the arry'); 
+console.log(dailyArray); 
+</script>
+</body>
+

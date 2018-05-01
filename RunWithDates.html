@@ -14,8 +14,18 @@
     <p>Update the Bid</p>
     <input type="number" id="BidPrice" value="20">
     <button onclick="updateBidPrice()">Bid Price, $/MWh</button>
+
     <input type="number" id="BidAmount" value="1">
     <button onclick="updateBidAmount()">Bid Amount, MW</button>
+
+    <p>Select Dates</p>
+    <input type="text" id="startDate" value="04/01/2016">
+    <button onclick="run()">Start Date</button>
+
+    <input type="text" id="endDate" value="04/07/2016">
+    <button onclick="run()">End Date</button>
+    
+
 
 
 </head>
@@ -32,8 +42,60 @@
     google.charts.load('current', {packages: ['corechart', 'bar']});
     google.charts.setOnLoadCallback(drawProfit);
 
+//this function isn't recognizing 
+$( function() {
+    // Initialize date-pickers
+    $( "#startDate" ).datepicker({dateFormat: "mm/dd/yy"});
+    $( "#endDate" ).datepicker({dateFormat: "mm/dd/yy"});
+} );
+
+var ENERGYDAT = ALLDATA.map(t=>{
+        var v = {
+            date: t[1],
+            hourEnding: t[2],
+            locationID: t[3],
+            locationName: t[4],
+            locationType: t[5],
+            marginalPrice: t[6],
+            energyComponent: t[7],
+            congestionComponent: t[8],
+            marginalLossComponent: t[9]
+        };
+        return v;
+    });
+
+function run(){
+    // Data from ne-iso
+    console.log(getDataFromRange());
+    // Data from MIT's usage
+    console.log(getUsageFromRange());
+    updateBidPrice();
+    updateBidAmount();
+    google.charts.setOnLoadCallback(drawISONEPRices); 
+    google.charts.setOnLoadCallback(drawProfit);
+}
+
+// Function to get data within time range
+function getDataFromRange(startDate, endDate){
+    // Set default values
+    startDate   = startDate || $('#startDate').val();
+    endDate     = endDate || $('#endDate').val();
+    // Filter data
+    return ENERGYDAT.filter(o => o.date >= startDate && o.date <= endDate);
+}
+
+// Function to get data within time range
+function getUsageFromRange(startDate, endDate){
+    // Set default values
+    startDate   = startDate || $('#startDate').val();
+    endDate     = endDate || $('#endDate').val();
+    // Filter data
+    return MITDATA.filter(o => o.date >= startDate && o.date <= endDate);
+}
+
 function drawISONEPRices() {
-    var PriceBidGraphableArray = ALLDATA.map(function (element) {
+    var ALLDATA2 = getDataFromRange(); 
+    var PriceBidGraphableArray = ALLDATA2.map(function (element) {
         var intermediate = [];
         intermediate.push(element[1] + '/' + element[2]);
         intermediate.push(element[6]);
@@ -56,9 +118,11 @@ function drawISONEPRices() {
 //tried https://stackoverflow.com/questions/17500312/is-there-some-way-i-can-join-the-contents-of-two-javascript-arrays-much-like-i
 
 function drawProfit(){
+    var ALLDATA3 = getDataFromRange(); 
+    var MITDATA2 = getUsageFromRange(); 
     var Profit = []; 
     var Use = []; 
-    ALLDATA.forEach(function(element) {
+    ALLDATA3.forEach(function(element) {
         var profitIntermediate = {}; 
         profitIntermediate.date = element[1];
         profitIntermediate.time = element[2]+':00';
@@ -70,7 +134,7 @@ function drawProfit(){
         Profit.push(profitIntermediate); 
     });
 
-    MITDATA.forEach(function(element){
+    MITDATA2.forEach(function(element){
         var DataIntermediate = {};
         if(element.time[3]== '0'){
             DataIntermediate.date = element.date;
