@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+            crossorigin="anonymous">
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script src="datAll.js"></script>
+        <script src="Bid.js"></script>
+        <script src="mitUse.js"></script>
+    
+</head>
+<title>1.001 Final Project</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+<style>
+    body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
+    body {font-size:16px;}
+    .w3-half img{margin-bottom:-6px;margin-top:16px;opacity:0.8;cursor:pointer}
+    .w3-half img:hover{opacity:1}
+</style>
+
+<body>
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-indigo w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
+  <div class="w3-container">
+    <h3 class="w3-padding-64"><b>1.001 Final Project</b></h3>
+  </div>
+  <div class="w3-bar-block">
+    <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
+    <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">ABOUT</a>     
+    <a href="#data" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">DATA ANALYSIS</a> 
+    <a href="#dashboard" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">DASHBOARD</a> 
+    <a href="#team" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">TEAM</a> 
+  </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<div class="w3-main" style="margin-left:340px;margin-right:40px">
+
+  <!-- Header -->
+  <div class="w3-container" style="margin-top:80px" id="showcase">
+    <h1 class="w3-jumbo"><b>Save Energy Make Money</b></h1>
+  </div>
+  
+  <img src="powerplantImage.jpg" alt="plant" style="width:100%">
+
+<!-- About -->
+<div class="w3-container" id="about" style="margin-top:75px">
+    <h1 class="w3-xxxlarge w3-text-indigo"><b>About</b></h1>
+    <p>
+        MIT looks to reduce campus greenhouse gas emissions by at least 32% of 2014 levels by 2030.  If MIT continues to purchase significant quantities of electricity from the grid, it may be challenging to incentivize the actions necessary to achieve these ambitious climate goals.
+    </p>
+    <p>
+        However, MIT could get paid for reducing its electricity consumption.
+        Smaller consumers write a check to an electric utility.  However, in Massachusetts, these utilities are not generating power. They buy power in a large auction. In this auction, overseen by an  “Independent System Operator (ISO),” utilities say “I am willing to pay $X for Y amount of power,” and for generators to offer “$A for providing B amount of power.” The ISO makes sure that the cheapest power is procured, while ensuring the transmission lines are safe.
+    </p>
+    <p>
+        Only a third of the energy embedded in fossil fuel ends up consumed. It can be a lot cheaper for people not to use energy in the first place. Demand response refers to end-use consumers using less energy. Demand response can be considered a resource similar to a generator - using less energy is like making more energy. In these ISO markets, demand response resources can bid in like generators. Demand response resources can say “I would like to be paid $J for not using K amount of energy.” If cost-effective, the ISO will ask demand response resources to use less energy, replacing a generator from producing more energy.
+    </p> 
+    <p>
+        MIT could be a demand response resource in New England’s ISO. In other words, MIT could make money by reducing its electricity consumption. However, this theoretical idea may not align with the reality: could MIT make money from participating as a demand response resource? If so, how much money? Our project looks to tackle these questions.
+    </p>
+    <img src="mitplant2.jpg" alt="plant" style="width:100%">
+</div>
+
+  
+<!-- Data Analysis -->
+  <div class="w3-container" id="data" style="margin-top:75px">
+    <h1 class="w3-xxxlarge w3-text-indigo"><b>Data Analysis</b></h1>
+    
+  </div>
+  <input type="number" id="BidPrice" value="20">
+  <button onclick="updateBidPrice()">Bid Price, $/MWh</button>
+  <input type="number" id="BidAmount" value="1">
+  <button onclick="updateBidAmount()">Bid Amount, MW</button>
+  
+  <div id="drawISONEPRicesChart_Div" style="width: 900px; height: 500px;"></div>
+    <div id="drawProfitability_Div" style="width: 900px; height: 500px;"></div>
+    
+    <script type="text/javascript">
+
+    //loading google charts
+    google.charts.load('current', { packages: ['corechart', 'line'] });
+    google.charts.setOnLoadCallback(drawISONEPRices);
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawProfit);
+
+function drawISONEPRices() {
+    var PriceBidGraphableArray = ALLDATA.map(function (element) {
+        var intermediate = [];
+        intermediate.push(element[1] + '/' + element[2]);
+        intermediate.push(element[6]);
+        intermediate.push(BidPrice);
+        return intermediate;
+    });
+    PriceBidGraphableArray.unshift(['Time', 'DAM LMP', "Bid Price"]);
+    var gdata = google.visualization.arrayToDataTable(PriceBidGraphableArray);
+    var options = {
+        title: 'ISO-NE Price versus Bid Price',
+        vAxis: { title: 'LMP ($/MWh)' },
+        hAxis: { title: 'Time (Month/Day/Year/Hour)' },
+        seriesType: 'line',
+        series: { 1: { type: 'line' } }
+    }
+    var chart = new google.visualization.ComboChart(document.getElementById('drawISONEPRicesChart_Div'));
+    chart.draw(gdata, options);
+        }
+         
+//tried https://stackoverflow.com/questions/17500312/is-there-some-way-i-can-join-the-contents-of-two-javascript-arrays-much-like-i
+
+function drawProfit(){
+    var Profit = []; 
+    var Use = []; 
+    ALLDATA.forEach(function(element) {
+        var profitIntermediate = {}; 
+        profitIntermediate.date = element[1];
+        profitIntermediate.time = element[2]+':00';
+        if(element[6]>=BidPrice){
+            profitIntermediate.perUnitProfit= (element[6]-BidPrice)
+            }
+        else{profitIntermediate.perUnitProfit= 0}
+    
+        Profit.push(profitIntermediate); 
+    });
+
+    MITDATA.forEach(function(element){
+        var DataIntermediate = {};
+        if(element.time[3]== '0'){
+            DataIntermediate.date = element.date;
+            DataIntermediate.time = element.time; 
+                if(element.usage/1000 >= BidMW){
+                DataIntermediate.MWReduction= BidMW}
+                else{DataIntermediate.MWReduction = 0}
+            Use.push(DataIntermediate);
+            }
+        });  
+            
+    function mergeArrays(a,b){
+            arr=[];
+        a.forEach(function(element){
+            let c={}; 
+           b.forEach(function(thing){
+               if((element.date===thing.date)&&(element.time===thing.time)){
+                   c.date = thing.date;
+                   c.time = thing.time;
+                   c.profit = element.perUnitProfit*thing.MWReduction; 
+                //console.log(c)
+                   arr.push(c);
+               }
+                                 })
+                                }); 
+                            return arr;
+                            }; 
+    var joinedArray= mergeArrays(Profit, Use); 
+    console.log('this is the joined array'); 
+    console.log(joinedArray); 
+    var dateArry = [];
+    ALLDATA.forEach(function(element){
+    if(dateArry.indexOf(element[1])==-1){dateArry.push(element[1])}
+    }); 
+
+    var dailyArray = [];
+    var currentDate = joinedArray[0].date;
+    var currentEntry = {date:currentDate, profit:0}
+    joinedArray.forEach(function(elem){
+        if(elem.date == currentEntry.date){
+            currentEntry.profit += Number(elem.profit)
+        } else {
+            dailyArray.push([currentEntry.date,currentEntry.profit]);
+            currentEntry.date = elem.date;
+            currentEntry.profit = 0;
+        }
+    });            
+
+
+    dailyArray.unshift(["Date","Profit"]); 
+        var data = new google.visualization.arrayToDataTable(dailyArray);
+        var options = {
+        title: 'Daily Profit',
+        hAxis: {
+          title: 'Day',
+                }, 
+        vAxis: {
+          title: 'Profit ($)'
+                }
+        }
+        var chart = new google.visualization.ColumnChart(document.getElementById('drawProfitability_Div'));
+        chart.draw(data, options);
+   }
+   
+    </script>
+
+<!-- Dashboard -->
+<div class="w3-container" id="dashboard" style="margin-top:75px">
+    <h1 class="w3-xxxlarge w3-text-indigo"><b>Dashboard</b></h1>
+  
+  </div>
+  <img src="dash.jpg" alt="chart" style="width:100%">
+  <div id="chart_div" style="width: 900px; height: 500px;"></div>
+  <script type="text/javascript">
+
+
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawVisualization);
+    
+        function drawVisualization() {
+            //var Bid = require('./Bid');
+            //require is a node thing(?), so bring in bid thing another way (will need to do the same with Dave's data)
+            var data = google.visualization.arrayToDataTable([
+                ['Day/Hour', 'Profit', "Average Day-Ahead Locational Marginal Price"],
+                ['2004/05', 46, 24.5],
+                //going to have to insert our data here 
+                //draw from Dave's files and the bid price thing 
+                //maybe a forEach loop across Dave's javascript files where 
+                //where if(Bid>Price){profit = (Price-Bid)*BidMW}
+               ]);
+         
+            var options = {
+               title : 'Potential Profitability of MIT Demand Response Participation',
+               vAxis: {title: 'Average Day-Ahead Locational Marginal Price'},
+               hAxis: {title: 'Time'},
+               seriesType: 'bars',
+               series: {1: {type: 'line'}}
+             };
+         
+            var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+             chart.draw(data, options);
+           }
+    </script>
+  
+
+ <!-- Team -->
+ <div class="w3-container" id="team" style="margin-top:75px">
+        <h1 class="w3-xxxlarge w3-text-indigo"><b>Team</b></h1>
+        <p>We are a team of MIT graduate students from diverse backgrounds seeking to learn more about MIT's opportunities to become energy efficient.</p>
+        </div>
+      <!-- The Team -->
+      <div class="w3-row-padding w3-grayscale">
+         <div class="w3-col m4 w3-margin-bottom">
+          <div class="w3-light-grey">
+            <img src="nette2.jpg" alt="Annette" style="width:50%">
+            <div class="w3-container">
+              <h3>Annette Brocks</h3>
+                <p>Annette is a first year graduate student in the Technology and Policy Program.</p>
+            </div>
+          </div>
+        </div>
+        <div class="w3-col m4 w3-margin-bottom">
+          <div class="w3-light-grey">
+            <img src="dave.png" alt="Dave" style="width:50%">
+            <div class="w3-container">
+              <h3>David Garufi</h3>
+                <p>Dave is a second year graduate student in the System Design and Management program.</p>
+            </div>
+          </div>
+        </div>
+        <div class="w3-col m4 w3-margin-bottom">
+                <div class="w3-light-grey">
+                  <img src="dj2.jpg" alt="Delbert" style="width:50%">
+                  <div class="w3-container">
+                    <h3>Delbert Joo</h3>
+                    <p>Delbert is a second year graduate student in the System Design and Management program. </p>
+                  </div>
+                </div>
+              </div>
+      </div>
+
+<div class="w3-light-grey w3-container w3-padding-32" style="margin-top:75px;padding-right:58px"><p class="w3-right">1.001 Final Project</p></div>
+
+
+</script>
+
+</body>
+</html>
