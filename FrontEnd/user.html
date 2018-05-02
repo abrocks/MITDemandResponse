@@ -73,8 +73,83 @@
 <!-- Data Analysis -->
   <div class="w3-container" id="data" style="margin-top:75px">
     <h1 class="w3-xxxlarge w3-text-indigo"><b>Data Analysis</b></h1>
-    
   </div>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript" src = "pricetempday.json"></script>
+  <script type="text/javascript">
+window.onload = function(){
+  run();
+};
+
+function run(){
+ 
+  var dataSet = jsonDataset();
+
+  drawChart(dataSet);
+}
+//  build dataset
+// -------------------------------------
+function jsonDataset(){
+
+  //  the first position is used for  
+  //  names for columns in data array
+  var dataset = [[{label:'temp',id:'temp'}, {label:'price',id:'price'}, 
+  {label: 'date', role: 'tooltip'}]];
+  console.log(dataset);
+  var length = data.length;
+  for(var i=0; i<length; i++){
+      dataset.push([data[i].temp, data[i].price, data[i].date]);
+  }
+  return dataset;
+}
+//  draw graph
+// -------------------------------------
+google.load("visualization", "1", {packages:["corechart"]});
+//google.setOnLoadCallback(drawChart);
+
+function drawChart(data) {
+
+  var options = {
+      title: 'Energy Prices by Daily Temperature',
+      series: {
+          0: {type: "scatter"}
+      },
+
+      vAxis: {minValue: 0, maxValue: 100},
+
+      trendlines: {
+          0: {
+          color: 'purple',
+          lineWidth: 10,
+          opacity: 0.2,
+          type: 'polynomial',
+          degree: 1,
+          showR2: true,
+          visibleInLegend: true,
+          }
+      },
+      tooltip: {isHtml: true},
+      hAxis: {title: 'Average Daily Temperature', minValue: 0, maxValue: 100},
+      vAxis: {title: 'Price', minValue: 0, maxValue: 100},  
+  };
+
+  var dataTable = google.visualization.arrayToDataTable(data);
+
+  var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+  chart.draw(dataTable, options);
+  
+}
+
+</script>
+
+<div id="chart_div" style="width: 1000px; height: 400px;"></div>
+
+<!-- Dashboard -->
+<div class="w3-container" id="dashboard" style="margin-top:75px">
+    <h1 class="w3-xxxlarge w3-text-indigo"><b>Dashboard</b></h1>
+  
+  </div>
+
   <input type="number" id="BidPrice" value="20">
   <button onclick="updateBidPrice()">Bid Price, $/MWh</button>
   <input type="number" id="BidAmount" value="1">
@@ -262,44 +337,6 @@ function drawPriceUse(){
     var Chart = new google.charts.Line(drawPriceUse_Div);
     Chart.draw(data, options);
 }
-    </script>
-
-<!-- Dashboard -->
-<div class="w3-container" id="dashboard" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-indigo"><b>Dashboard</b></h1>
-  
-  </div>
-  <img src="dash.jpg" alt="chart" style="width:100%">
-  <div id="chart_div" style="width: 900px; height: 500px;"></div>
-  <script type="text/javascript">
-
-
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawVisualization);
-    
-        function drawVisualization() {
-            //var Bid = require('./Bid');
-            //require is a node thing(?), so bring in bid thing another way (will need to do the same with Dave's data)
-            var data = google.visualization.arrayToDataTable([
-                ['Day/Hour', 'Profit', "Average Day-Ahead Locational Marginal Price"],
-                ['2004/05', 46, 24.5],
-                //going to have to insert our data here 
-                //draw from Dave's files and the bid price thing 
-                //maybe a forEach loop across Dave's javascript files where 
-                //where if(Bid>Price){profit = (Price-Bid)*BidMW}
-               ]);
-         
-            var options = {
-               title : 'Potential Profitability of MIT Demand Response Participation',
-               vAxis: {title: 'Average Day-Ahead Locational Marginal Price'},
-               hAxis: {title: 'Time'},
-               seriesType: 'bars',
-               series: {1: {type: 'line'}}
-             };
-         
-            var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-             chart.draw(data, options);
-           }
     </script>
   
 
