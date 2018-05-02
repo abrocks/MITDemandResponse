@@ -82,6 +82,7 @@
   
   <div id="drawISONEPRicesChart_Div" style="width: 900px; height: 500px;"></div>
     <div id="drawProfitability_Div" style="width: 900px; height: 500px;"></div>
+    <div id="drawPriceUse_Div" style="width: 900px; height: 500px;"></div>
     
     <script type="text/javascript">
 
@@ -90,6 +91,9 @@
     google.charts.setOnLoadCallback(drawISONEPRices);
     google.charts.load('current', {packages: ['corechart', 'bar']});
     google.charts.setOnLoadCallback(drawProfit);
+    google.charts.load('current', {'packages':['line', 'corechart']});
+    google.charts.setOnLoadCallback(drawPriceUse);
+
 
 function drawISONEPRices() {
     var PriceBidGraphableArray = ALLDATA.map(function (element) {
@@ -150,7 +154,6 @@ function drawProfit(){
                    c.date = thing.date;
                    c.time = thing.time;
                    c.profit = element.perUnitProfit*thing.MWReduction; 
-                //console.log(c)
                    arr.push(c);
                }
                                  })
@@ -158,8 +161,6 @@ function drawProfit(){
                             return arr;
                             }; 
     var joinedArray= mergeArrays(Profit, Use); 
-    console.log('this is the joined array'); 
-    console.log(joinedArray); 
     var dateArry = [];
     ALLDATA.forEach(function(element){
     if(dateArry.indexOf(element[1])==-1){dateArry.push(element[1])}
@@ -194,6 +195,73 @@ function drawProfit(){
         chart.draw(data, options);
    }
    
+function drawPriceUse(){
+    var Price = []; 
+    var Use = [];
+    ALLDATA.forEach(function(element){
+        var arryIntermediate = {}; 
+        arryIntermediate.date = element[1];
+        arryIntermediate.time = element[2]+':00';
+        arryIntermediate.price = element[6]; 
+        Price.push(arryIntermediate); 
+    });
+    MITDATA.forEach(function(element){
+        var DataIntermediate = {};
+        if(element.time[3]== '0'){
+            DataIntermediate.date = element.date;
+            DataIntermediate.time = element.time; 
+            DataIntermediate.MITUse = element.usage/1000; 
+            Use.push(DataIntermediate);
+            }
+        });  
+
+        function mergeArrays(a,b){
+            arr=[];
+        a.forEach(function(element){
+            let c={}; 
+           b.forEach(function(thing){
+               if((element.date===thing.date)&&(element.time===thing.time)){
+                   c.date = thing.date;
+                   c.time = thing.time;
+                   c.price = element.price;
+                   c.use = thing.MITUse;  
+                   arr.push(c);
+               }
+                                 })
+                                }); 
+                            return arr;
+                            }; 
+    var joinedArray= mergeArrays(Price, Use);
+    var graphThisArry = []; 
+    joinedArray.forEach(function(element){
+        var x = element.date + '/'+ element.time;
+        var y = element.price;
+        var z = element.use; 
+        graphThisArry.push([x,y,z]); 
+    }); 
+    console.log('this is the arry I want to graph'); 
+    console.log(graphThisArry); 
+    graphThisArry.unshift(["Date/Time",'ISO-NE Price ($/MWh)','MIT Use (MW)']); 
+
+    var data = new google.visualization.arrayToDataTable(graphThisArry);
+    var options = {
+        chart: {
+          title: 'ISO-NE Price ($/MWh) versus MIT Consumption (MW)'
+        },
+        series: {
+          0: {axis: 'YYY'},
+          1: {axis: 'ZZZ'}
+        },
+        axes: {
+          y: {
+            YYY: {label: 'ISO-NE Price ($/MWh)'},
+            ZZZ: {label: 'MIT Consumption (MW)'}
+          }
+        }
+    }; 
+    var Chart = new google.charts.Line(drawPriceUse_Div);
+    Chart.draw(data, options);
+}
     </script>
 
 <!-- Dashboard -->
