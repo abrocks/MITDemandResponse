@@ -1,4 +1,4 @@
-let MITDATA = [
+exports.datMit = function () {return [
 {date: '04/01/2016',time: '00:00',usage:15638.82},
 {date: '04/01/2016',time: '00:15',usage:15551.24},
 {date: '04/01/2016',time: '00:30',usage:15487.65},
@@ -35158,4 +35158,4 @@ let MITDATA = [
 {date: '10/31/2016',time: '23:00',usage:16040.99},
 {date: '10/31/2016',time: '23:15',usage:15809.32},
 {date: '10/31/2016',time: '23:30',usage:15717.17},
-{date: '10/31/2016',time: '23:45',usage:15602.33}]
+{date: '10/31/2016',time: '23:45',usage:15602.33}]};
