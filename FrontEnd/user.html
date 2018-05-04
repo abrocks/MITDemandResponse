@@ -287,11 +287,11 @@ chart.draw(data, options);
     <div>
         <h3>  Daily profits </h3>
     </div>
-    <div id ="DayProfit_Div"style="width: 900px; height: 200px;"></div>
+    <div id ="DayProfit_Div" style="width: 900px; height: 200px;">Daily Profits</div>
     <div>
-            <h3> Total profits</h3>
+        <h3> Total profits</h3>
         </div>
-    <div id ="IntervalProfit_Div"style="width: 900px; height: 200px;"></div>
+    <div id ="IntervalProfit_Div" style="width: 900px; height: 200px;">Total Profit</div>
     <script type="text/javascript">
 
     //loading google charts
@@ -301,6 +301,10 @@ chart.draw(data, options);
     google.charts.setOnLoadCallback(drawProfit);
     google.charts.load('current', {'packages':['line', 'corechart']});
     google.charts.setOnLoadCallback(drawPriceUse);
+//load the profit tallys
+window.onload = function(){
+    totalProfit(); 
+}
 
 //Graph 1
 function drawISONEPRices() {
@@ -530,15 +534,16 @@ function totalProfit(){
 return accum;
     },[]); 
     console.log('this is the reduce function I had, should look like day:profit');
-    console.log(graphArray); 
-    document.getElementById(DayProfit_Div).innerHTML = dayProfit;
+    console.log(dayProfit); 
+    document.write(dayProfit); 
+    document.getElementById("DayProfit_Div").innerHTML = String(dayProfit); 
 
     console.log('this should be just the profit of the interval'); 
     var totalProfit = joinedArray.reduce(function(accum, current){
     accum[current.profit]+= current.profit; 
 },[]); 
     console.log(totalProfit); 
-    document.getElementById(IntervalProfit_Div).innerHTML = totalProfit; 
+    document.getElementById("IntervalProfit_Div").innerHTML = String(totalProfit); 
 
 }
     </script>
