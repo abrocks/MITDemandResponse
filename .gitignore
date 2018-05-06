@@ -65,8 +65,6 @@ typings/
 .idea/modules.xml
 .idea/misc.xml
 .idea/misc.xml
-site/mitUse_sm.js
-site/datAll_sm.js
 parse/mitUse_sm.js
 parse/datAll_sm.js
 .idea/workspace.xml
