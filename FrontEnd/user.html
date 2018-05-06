@@ -81,36 +81,38 @@
   </div>
 
 <!-- Price and Temp Analysis Chart -->
-    <div class="w3-container" id="pricetemp" style="margin-top:10px">
-        <h1 class="w3-large w3-text-indigo"><b>Price and Temperature Analysis</b></h1>
-        <p>Extreme temperatures seem correlated with higher prices.</p>
-    </div>
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript" src = "pricetempday.json"></script>
-  <script type="text/javascript">
+<div class="w3-container" id="pricetemp" style="margin-top:10px">
+    <h1 class="w3-xlarge w3-text-indigo"><b>Price and Temperature Analysis</b></h1>
+ </div>
+<p>Temperature extremes drive higher prices.</p>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src = "pricetempday.json"></script>
+<script type="text/javascript">
 window.onload = function(){
-  run();
+run();
+totalProfit();
+total2016Profit(); 
 };
 
 function run(){
 
-  var dataSet = jsonDataset();
+var dataSet = jsonDataset();
 
-  drawPriceTempChart(dataSet);
+drawPriceTempChart(dataSet);
 }
 //  build dataset
 // -------------------------------------
 function jsonDataset(){
 
-  //  the first position is used for
-  //  names for columns in data array
-  var dataset = [[{label:'temp',id:'temp'}, {label:'price',id:'price'},
-  {label: 'date', role: 'tooltip'}]];
-  var length = data.length;
-  for(var i=0; i<length; i++){
-      dataset.push([data[i].temp, data[i].price, data[i].date]);
-  }
-  return dataset;
+//  the first position is used for
+//  names for columns in data array
+var dataset = [[{label:'temp',id:'temp'}, {label:'price',id:'price'},
+{label: 'date', role: 'tooltip'}]];
+var length = data.length;
+for(var i=0; i<length; i++){
+  dataset.push([data[i].temp, data[i].price, data[i].date]);
+}
+return dataset;
 }
 //  draw graph
 // -------------------------------------
@@ -119,34 +121,34 @@ google.load("visualization", "1", {packages:["corechart"]});
 
 function drawPriceTempChart(data) {
 
-  var options = {
-      title: 'Energy Prices by Daily Temperature',
-      series: {
-          0: {type: "scatter"}
-      },
+var options = {
+  title: 'Energy Prices by Daily Temperature',
+  series: {
+      0: {type: "scatter"}
+  },
 
-      vAxis: {minValue: 0, maxValue: 100},
+  vAxis: {minValue: 0, maxValue: 100},
 
-      trendlines: {
-          0: {
-          color: 'purple',
-          lineWidth: 10,
-          opacity: 0.2,
-          type: 'polynomial',
-          degree: 1,
-          showR2: true,
-          visibleInLegend: true,
-          }
-      },
-      tooltip: {isHtml: true},
-      hAxis: {title: 'Average Daily Temperature', minValue: 0, maxValue: 100},
-      vAxis: {title: 'Price', minValue: 0, maxValue: 100},
-  };
+//   trendlines: {
+//       0: {
+//       color: 'purple',
+//       lineWidth: 10,
+//       opacity: 0.2,
+//       type: 'polynomial',
+//       degree: 1,
+//       showR2: true,
+//       visibleInLegend: true,
+//       }
+//   },
+  tooltip: {isHtml: true},
+  hAxis: {title: 'Average Daily Temperature', minValue: 0, maxValue: 100},
+  vAxis: {title: 'Price', minValue: 0, maxValue: 100},
+};
 
-  var dataTable = google.visualization.arrayToDataTable(data);
+var dataTable = google.visualization.arrayToDataTable(data);
 
-  var chart = new google.visualization.ScatterChart(document.getElementById('PriceTempchart_div'));
-  chart.draw(dataTable, options);
+var chart = new google.visualization.ScatterChart(document.getElementById('PriceTempchart_div'));
+chart.draw(dataTable, options);
 
 }
 
@@ -155,9 +157,9 @@ function drawPriceTempChart(data) {
 
 <!-- Price and Month Analysis Chart -->
 <div class="w3-container" id="pricetemp" style="margin-top:10px">
-        <h1 class="w3-large w3-text-indigo"><b>Price and Month Analysis</b></h1>
+        <h1 class="w3-xlarge w3-text-indigo"><b>Price and Month Analysis</b></h1>
 </div>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<p>Monthly average prices also reflect temperature sensitivity.</p>
 <script type="text/javascript">
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawPriceMonthChart);
@@ -202,10 +204,9 @@ chart.draw(data, options);
 <div class="w3-container" id="pricehour" style="margin-top:10px">
 </div>
 <div class = "w3-container" id = "pricehour" style = 'margin-top: 10px'>
-    <h1 class = "w3-large w3-text-indigo"><b>Price and Hour Anaylsis</b></h1>
+    <h1 class = "w3-xlarge w3-text-indigo"><b>Price and Hour Anaylsis</b></h1>
 </div>
-
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<p>Peak hourly prices at 6 pm present a demand response opportunity.</p>
         <script type="text/javascript">
             google.charts.load('current', {'packages':['corechart']});
             google.charts.setOnLoadCallback(drawPriceHourChart);
@@ -300,11 +301,11 @@ chart.draw(data, options);
     google.charts.setOnLoadCallback(drawProfit);
     google.charts.load('current', {'packages':['line', 'corechart']});
     google.charts.setOnLoadCallback(drawPriceUse);
-//load the profit tallys
-window.onload = function(){
-    totalProfit();
-    total2016Profit();  
-}
+//load the profit tallys (Moved to Data Analysis window.onload)
+// window.onload = function(){
+//     totalProfit();
+//     total2016Profit();  
+// }
 
 //Graph 1
 function drawISONEPRices() {
